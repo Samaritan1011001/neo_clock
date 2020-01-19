@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,14 @@ enum _Element {
 }
 
 final _lightTheme = {
-  _Element.background: Color(0xFF81B3FE),
-  _Element.text: Colors.white,
+  _Element.background: Colors.white,
+  _Element.text: Colors.black,
   _Element.shadow: Colors.black,
 };
 
 final _darkTheme = {
   _Element.background: Colors.black,
-  _Element.text: Colors.white,
+  _Element.text: Colors.black,
   _Element.shadow: Color(0xFF174EA6),
 };
 
@@ -41,6 +42,9 @@ class DigitalClock extends StatefulWidget {
 class _DigitalClockState extends State<DigitalClock> {
   DateTime _dateTime = DateTime.now();
   Timer _timer;
+  Timer _secondsTimer;
+
+  bool selected = false;
 
   @override
   void initState() {
@@ -62,6 +66,7 @@ class _DigitalClockState extends State<DigitalClock> {
   @override
   void dispose() {
     _timer?.cancel();
+    _secondsTimer?.cancel();
     widget.model.removeListener(_updateModel);
     widget.model.dispose();
     super.dispose();
@@ -84,6 +89,15 @@ class _DigitalClockState extends State<DigitalClock> {
             Duration(milliseconds: _dateTime.millisecond),
         _updateTime,
       );
+
+//      selected = !selected;
+//      _secondsTimer = Timer(
+//        Duration(seconds: 15) -
+//            Duration(seconds: _dateTime.second) -
+//            Duration(milliseconds: _dateTime.millisecond),
+//        _updateTime,
+//      );
+
       // Update once per second, but make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       // _timer = Timer(
@@ -101,34 +115,139 @@ class _DigitalClockState extends State<DigitalClock> {
     final hour =
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
-    final fontSize = MediaQuery.of(context).size.width / 3.5;
+    final fontSize = MediaQuery.of(context).size.width / 6.5;
     final offset = -fontSize / 7;
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
-      fontFamily: 'PressStart2P',
+      fontWeight: FontWeight.w200,
+//      fontFamily: 'PressStart2P',
       fontSize: fontSize,
-      shadows: [
-        Shadow(
-          blurRadius: 0,
-          color: colors[_Element.shadow],
-          offset: Offset(10, 0),
-        ),
-      ],
+//      shadows: [
+//        Shadow(
+//          blurRadius: 0,
+//          color: colors[_Element.shadow],
+//          offset: Offset(10, 0),
+//        ),
+//      ],
     );
 
-    return Container(
-      color: colors[_Element.background],
-      child: Center(
-        child: DefaultTextStyle(
-          style: defaultStyle,
-          child: Stack(
-            children: <Widget>[
-              Positioned(left: offset, top: 0, child: Text(hour)),
-              Positioned(right: offset, bottom: offset, child: Text(minute)),
+    return GestureDetector(
+      onTap: () {
+        print("tapped");
+        setState(() {
+          selected = !selected;
+        });
+      },
+      child: new AnimatedContainer(
+        duration: Duration(seconds: 2),
+        width: 350.0,
+        height: 350.0,
+        padding: EdgeInsets.all(7),
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+                begin: Alignment(-1.0, -4.0),
+                end: Alignment(1.0, 4.0),
+                colors: [
+                  Color(0xFFadadad),
+                  Color(0xFFcdcdcd),
+                ],
+            ),
+//          borderRadius: BorderRadius.all(Radius.circular(35)),
+            boxShadow: selected ? null :
+            [
+              BoxShadow(
+                  color: Colors.black54,
+                  offset: Offset(7.0, 7.0),
+                  blurRadius: 15.0,
+                  spreadRadius: 5.0),
+              BoxShadow(
+                  color: Color(0xFFdddddd),
+                  offset: Offset(-7.0, -7.0),
+                  blurRadius: 15.0,
+                  spreadRadius: 5.0),
             ],
+          border: Border.all(color: Color(0xFFdddddd),width: 0.3)
+        ),
+
+//      new BoxDecoration(
+//        color: Colors.white70,
+//        shape: BoxShape.circle,
+//        boxShadow: [
+//          new BoxShadow(
+//            color: Colors.black45,
+//            offset: new Offset(15.0, 10.0),
+//            blurRadius: 25.0,
+//            spreadRadius: 0.2,
+//          )
+//        ],
+//      ),
+
+        child: new CustomPaint(
+          foregroundPainter: new MyPainter(
+            lineColor: Colors.transparent,
+            completeColor: Colors.teal,
+            completePercent: (_dateTime.hour / 24) * 100,
+            width: 2.0,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(7),
+            child: CustomPaint(
+              foregroundPainter: new MyPainter(
+                lineColor: Colors.transparent,
+                completeColor: Colors.deepOrange,
+                completePercent: (_dateTime.minute / 60) * 100,
+                width: 2.0,
+              ),
+              child: Center(
+                child: DefaultTextStyle(
+                  style: defaultStyle,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(hour),
+                      Text(minute),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
+  }
+}
+
+class MyPainter extends CustomPainter {
+  Color lineColor;
+  Color completeColor;
+  double completePercent;
+  double width;
+  MyPainter(
+      {this.lineColor, this.completeColor, this.completePercent, this.width});
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint line = new Paint()
+      ..color = lineColor
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width;
+    Paint complete = new Paint()
+      ..color = completeColor
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width;
+    Offset center = new Offset(size.width / 2, size.height / 2);
+    double radius = min(size.width / 2, size.height / 2);
+    canvas.drawCircle(center, radius, line);
+    double arcAngle = 2 * pi * (completePercent / 100);
+    canvas.drawArc(new Rect.fromCircle(center: center, radius: radius), -pi / 2,
+        arcAngle, false, complete);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }
