@@ -81,31 +81,14 @@ class _DigitalClockState extends State<DigitalClock> {
   void _updateTime() {
     setState(() {
       _dateTime = DateTime.now();
-      if(_dateTime.second % 1 ==0){
-        selected =!selected;
+      if (_dateTime.second % 1 == 0) {
+        selected = !selected;
       }
-      // Update once per minute. If you want to update every second, use the
-      // following code.
-//      _timer = Timer(
-//        Duration(minutes: 1) -
-//            Duration(seconds: _dateTime.second) -
-//            Duration(milliseconds: _dateTime.millisecond),
-//        _updateTime,
-//      );
+
       _timer = Timer(
-//        Duration(minutes: 1) -
-            Duration(seconds: 1) -
-            Duration(milliseconds: _dateTime.millisecond),
+        Duration(seconds: 1) - Duration(milliseconds: _dateTime.millisecond),
         _updateTime,
       );
-
-
-      // Update once per second, but make sure to do it at the beginning of each
-      // new second, so that the clock is accurate.
-      // _timer = Timer(
-      //   Duration(seconds: 1) - Duration(milliseconds: _dateTime.millisecond),
-      //   _updateTime,
-      // );
     });
   }
 
@@ -119,188 +102,62 @@ class _DigitalClockState extends State<DigitalClock> {
     final minute = DateFormat('mm').format(_dateTime);
     final second = DateFormat('ss').format(_dateTime);
     final fontSize = MediaQuery.of(context).size.width / 6.5;
-    final offset = -fontSize / 7;
     final defaultStyle = TextStyle(
       color: colors[_Element.text],
       fontWeight: FontWeight.w200,
-//      fontFamily: 'PressStart2P',
       fontSize: fontSize,
     );
-  print(second);
-    return GestureDetector(
-      onTap: () {
-        print("tapped");
-        setState(() {
-          selected = !selected;
-        });
-      },
-      child: new AnimatedContainer(
-        duration: Duration(seconds: 1),
-        width: 350.0,
-        height: 350.0,
-        padding: EdgeInsets.all(7),
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-                begin: Alignment(-1.0, -4.0),
-                end: Alignment(1.0, 4.0),
-                colors: [
-                  Color(0xFFadadad),
-                  Color(0xFFcdcdcd),
-                ],
-            ),
-//          borderRadius: BorderRadius.all(Radius.circular(35)),
-            boxShadow:
-            [
-              BoxShadow(
-                  color: Colors.black54,
-                  offset: Offset(7.0, 7.0),
-                  blurRadius: 15.0,
-                  spreadRadius: 5.0),
-              BoxShadow(
-                  color: Color(0xFFdddddd),
-                  offset: Offset(-7.0, -7.0),
-                  blurRadius: 15.0,
-                  spreadRadius: 5.0),
-            ],
-          border: Border.all(color: Color(0xFFdddddd),width: 0.3)
-        ),
-
-//      new BoxDecoration(
-//        color: Colors.white70,
-//        shape: BoxShape.circle,
-//        boxShadow: [
-//          new BoxShadow(
-//            color: Colors.black45,
-//            offset: new Offset(15.0, 10.0),
-//            blurRadius: 25.0,
-//            spreadRadius: 0.2,
-//          )
-//        ],
-//      ),
-
-        child: new CustomPaint(
-          foregroundPainter: new MyPainter(
-            lineColor: Colors.transparent,
-            completeColor: Colors.teal,
-            completePercent: (_dateTime.hour / 24) * 100,
-            width: 2.0,
-          ),
-          child: Container(
-            padding: EdgeInsets.all(7),
-            child: CustomPaint(
-              foregroundPainter: new MyPainter(
-                lineColor: Colors.transparent,
-                completeColor: Colors.black38,
-                completePercent: (_dateTime.minute / 60) * 100,
-                width: 2.0,
-              ),
-              child: Center(
-                child: DefaultTextStyle(
-                  style: defaultStyle,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(hour),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-
-                          SizedBox(
-                            width:35.0,
-                            height:35.0,
-                            child: AnimatedContainer(
-                                duration: Duration(seconds: 1),
-                                width: selected ? 25.0 : 35.0,
-                                height: selected ? 25.0 : 35.0,
-                                padding: EdgeInsets.all(7),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    begin: Alignment(-1.0, -4.0),
-                                    end: Alignment(1.0, 4.0),
-                                    colors: [
-                                      Color(0xFFadadad),
-                                      Color(0xFFcdcdcd),
-                                    ],
-                                  ),
-//                        borderRadius: BorderRadius.all(Radius.circular(35)),
-                                  boxShadow: selected ? null :
-                                  [
-                                    BoxShadow(
-                                        color: Colors.black54,
-                                        offset: Offset(7.0, 7.0),
-                                        blurRadius: 15.0,
-                                        spreadRadius: 5.0),
-                                    BoxShadow(
-                                        color: Color(0xFFdddddd),
-                                        offset: Offset(-7.0, -7.0),
-                                        blurRadius: 15.0,
-                                        spreadRadius: 5.0),
-                                  ],
-//                            border: Border.all(color: Color(0xFFdddddd),width: 0.3)
-                                ),
-                                child: Center(
-                                  child: Text(second,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),),
-                                )
-
-                            ),
-                          ),
-                        ],
+    return new NeoContainer(
+      switchCase: false,
+      size: Size(350.0, 350.0),
+      child: ProgressLine(
+        completeColor: Colors.teal,
+        completePercent: (_dateTime.hour / 24) * 100,
+        child: Container(
+          padding: EdgeInsets.all(7),
+          child: ProgressLine(
+            completePercent: (_dateTime.minute / 60) * 100,
+            completeColor: Colors.black38,
+            child: Center(
+              child: DefaultTextStyle(
+                style: defaultStyle,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(
+                      hour,
+                      style: TextStyle(
+                        color: Colors.teal,
+                        fontWeight: FontWeight.w300,
+                        fontSize: fontSize,
                       ),
-                      Text(minute),
-//                      Stack(
-//                        alignment: AlignmentDirectional.topCenter,
-//                        children: <Widget>[
-//                          CustomPaint(
-//                            size: Size(50, 50),
-//                            painter: ShadowPainter(),
-//                          ),
-//                          Positioned(
-//                            top: 12.5,
-//                            child: CustomPaint(
-//                              size: Size(30, 30),
-//                              painter: HeartPainter(),
-////                        child: AnimatedContainer(
-////                          duration: Duration(seconds: 2),
-////                          width: 30.0,
-////                          height: 30.0,
-////                          padding: EdgeInsets.all(7),
-////                          decoration: BoxDecoration(
-////                            shape: BoxShape.circle,
-////                            gradient: LinearGradient(
-////                              begin: Alignment(-1.0, -4.0),
-////                              end: Alignment(1.0, 4.0),
-////                              colors: [
-////                                Color(0xFFadadad),
-////                                Color(0xFFcdcdcd),
-////                              ],
-////                            ),
-//////                        borderRadius: BorderRadius.all(Radius.circular(35)),
-////                            boxShadow: selected ? null :
-////                            [
-////                              BoxShadow(
-////                                  color: Colors.black54,
-////                                  offset: Offset(7.0, 7.0),
-////                                  blurRadius: 15.0,
-////                                  spreadRadius: 5.0),
-////                              BoxShadow(
-////                                  color: Color(0xFFdddddd),
-////                                  offset: Offset(-7.0, -7.0),
-////                                  blurRadius: 15.0,
-////                                  spreadRadius: 5.0),
-////                            ],
-//////                            border: Border.all(color: Color(0xFFdddddd),width: 0.3)
-////                          ),
-////
-////                        ),
-//                            ),
-//                          ),
-//                        ],
-//                      ),
-
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 35.0,
+                      height: 35.0,
+                      child: NeoContainer(
+                        switchCase: selected,
+                        size: Size(35.0, 35.0),
+                        child: Center(
+                          child: Text(
+                            second,
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black38,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      minute,
+                      style: TextStyle(
+                        color: Colors.black38,
+                        fontWeight: FontWeight.w300,
+                        fontSize: fontSize,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -311,12 +168,131 @@ class _DigitalClockState extends State<DigitalClock> {
   }
 }
 
-class MyPainter extends CustomPainter {
+class NeoContainer extends StatelessWidget {
+  final bool switchCase;
+  final Widget child;
+  final Size size;
+  NeoContainer({this.child, this.switchCase, this.size});
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: Duration(seconds: 1),
+      width: switchCase ? 25.0 : size.width,
+      height: switchCase ? 25.0 : size.height,
+      padding: EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment(-1.0, -4.0),
+          end: Alignment(1.0, 4.0),
+          colors: [
+            Color(0xFFadadad),
+            Color(0xFFcdcdcd),
+          ],
+        ),
+        boxShadow: switchCase
+            ? null
+            : [
+                BoxShadow(
+                    color: Colors.black54,
+                    offset: Offset(7.0, 7.0),
+                    blurRadius: 15.0,
+                    spreadRadius: 5.0),
+                BoxShadow(
+                    color: Color(0xFFdddddd),
+                    offset: Offset(-7.0, -7.0),
+                    blurRadius: 15.0,
+                    spreadRadius: 5.0),
+              ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class ProgressLine extends StatefulWidget {
+  final Color completeColor;
+  final double completePercent;
+  final Widget child;
+
+  ProgressLine({this.child, this.completeColor, this.completePercent});
+  @override
+  ProgressLineState createState() => ProgressLineState();
+}
+
+class ProgressLineState extends State<ProgressLine>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  Tween<double> valueTween;
+  @override
+  void initState() {
+    super.initState();
+    this.valueTween = Tween<double>(
+      begin: 0,
+      end: this.widget.completePercent,
+    );
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: this._controller,
+      child: Container(),
+      builder: (context, child) {
+        return new CustomPaint(
+          foregroundPainter: new ProgressLinePainter(
+            lineColor: Colors.transparent,
+            completeColor: widget.completeColor,
+            completePercent: this.valueTween.evaluate(this._controller),
+            width: 2.0,
+          ),
+          child: widget.child,
+        );
+      },
+    );
+  }
+
+  @override
+  void didUpdateWidget(ProgressLine oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (this.widget.completePercent != oldWidget.completePercent) {
+      // Try to start with the previous tween's end value. This ensures that we
+      // have a smooth transition from where the previous animation reached.
+      double beginValue = this.valueTween?.evaluate(this._controller) ??
+          oldWidget?.completePercent ??
+          0;
+
+      // Update the value tween.
+      this.valueTween = Tween<double>(
+        begin: beginValue,
+        end: this.widget.completePercent ?? 1,
+      );
+
+      this._controller
+        ..value = 0
+        ..forward();
+    }
+  }
+}
+
+class ProgressLinePainter extends CustomPainter {
   Color lineColor;
   Color completeColor;
   double completePercent;
   double width;
-  MyPainter(
+  ProgressLinePainter(
       {this.lineColor, this.completeColor, this.completePercent, this.width});
   @override
   void paint(Canvas canvas, Size size) {
@@ -336,88 +312,6 @@ class MyPainter extends CustomPainter {
     double arcAngle = 2 * pi * (completePercent / 100);
     canvas.drawArc(new Rect.fromCircle(center: center, radius: radius), -pi / 2,
         arcAngle, false, complete);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class HeartPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
-    Paint paint = Paint();
-    paint
-//      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1;
-
-    Paint fillPainter = Paint();
-    fillPainter
-      ..color = Colors.transparent
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    double width = size.width;
-    double height = size.height;
-    Path path = Path();
-    path.moveTo(0.5 * width, height * 0.35);
-    path.cubicTo(0.2 * width, height * 0.1, -0.25 * width, height * 0.6,
-        0.5 * width, height);
-
-    path.moveTo(0.5 * width, height * 0.35);
-    path.cubicTo(0.8 * width, height * 0.1, 1.25 * width, height * 0.6,
-        0.5 * width, height);
-
-//    canvas.drawShadow(shadowPath, Colors.black54, 0.0, true);
-//    canvas.drawPath(path, fillPainter);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class ShadowPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
-
-    var gradient = LinearGradient(
-      begin: Alignment(-1.0, -4.0),
-      end: Alignment(1.0, 4.0),
-      colors: [
-        Color(0xFFadadad),
-        Color(0xFFcdcdcd),
-      ],
-    );
-    Paint shadowPaint = Paint();
-    shadowPaint
-      ..color = Colors.yellow
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..shader = gradient.createShader(Offset.zero & size)
-      ..strokeWidth = 50;
-    
-    double width = size.width;
-    double height = size.height;
-    Path shadowPath = Path();
-
-    shadowPath.moveTo(0.5 * width, height * 0.35);
-    shadowPath.cubicTo(0.2 * width, height * 0.1, -0.25 * width, height * 0.6,
-        0.5 * width, height);
-
-    shadowPath.moveTo(0.5 * width, height * 0.35);
-    shadowPath.cubicTo(0.8 * width, height * 0.1, 1.25 * width, height * 0.6,
-        0.5 * width, height);
-
-    canvas.drawShadow(shadowPath, Colors.black54, 0.0, true);
-
   }
 
   @override

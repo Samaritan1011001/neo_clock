@@ -79,28 +79,9 @@ class _ClockCustomizerState extends State<ClockCustomizer> {
         resizeToAvoidBottomPadding: false,
         backgroundColor: Color(0xFFc0c0c0),
         body: SafeArea(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: null,
-            child: Stack(
-              children: [
-                clock,
-              ],
-            ),
-          ),
+          child: clock,
         ),
       ),
     );
-  }
-}
-
-class generic_clock_shape extends StatelessWidget{
-  const generic_clock_shape(this._clock,this._model);
-
-  final _model;
-  final ClockBuilder _clock;
-  @override
-  Widget build(BuildContext context) {
-    return _clock(_model);
   }
 }
