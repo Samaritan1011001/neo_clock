@@ -1,11 +1,9 @@
 # Digital Clock
 
-This app is an example of a digital clock.
-It has a light theme and a dark theme.
-See the [Analog Clock](../analog_clock) if you'd like an example that displays the weather and location.
+This app is the official submission for the Flutter clock challenge.
+It currently has the 24hr format.
+The main code resides in neo_clock/digital_clock/lib/digital_clock.dart
 
-<img src='digital.gif' width='350'>
 
-<img src='digital_dark.png' width='350'>
+<img src='neo_clock.mp4' width='350'>
 
-<img src='digital_light.png' width='350'>
