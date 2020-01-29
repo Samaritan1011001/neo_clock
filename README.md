@@ -1,15 +1,9 @@
-# Flutter Clock
+# Digital Clock
 
-Welcome to Flutter Clock!
+This app is the official submission for the Flutter clock challenge.
+It currently has the 24hr format.
+The main code resides in neo_clock/digital_clock/lib/digital_clock.dart
 
-See [flutter.dev/clock](https://flutter.dev/clock) for how to get started, submission requirements, contest rules, and FAQs.
 
-See a [live demo](https://maryx.github.io/flutter_clock) with Flutter for Web!
+<img src='digital.gif' width='350'>
 
-Example [Analog Clock](analog_clock)
-
-<img src='analog_clock/analog.gif' width='350'>
-
-Example [Digital Clock](digital_clock)
-
-<img src='digital_clock/digital.gif' width='350'>
